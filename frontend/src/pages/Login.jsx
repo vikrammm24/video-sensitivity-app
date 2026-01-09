@@ -13,46 +13,63 @@ export default function Login() {
     try {
       const res = await api.post("/auth/login", {
         email,
-        password
+        password,
       });
 
       localStorage.setItem("token", res.data.token);
       window.location.href = "/library";
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Login failed. Check credentials."
-      );
+      setError("Invalid email or password");
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-slate-100">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-8 rounded-lg shadow-lg w-96"
+      >
+        <h2 className="text-2xl font-semibold mb-6 text-center">
+          Login
+        </h2>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && (
+          <p className="text-red-500 mb-4 text-center">
+            {error}
+          </p>
+        )}
 
-      <form onSubmit={handleLogin}>
         <input
           type="email"
           placeholder="Email"
+          className="w-full p-2 border rounded mb-4"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
 
-        <br />
-
         <input
           type="password"
           placeholder="Password"
+          className="w-full p-2 border rounded mb-6"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
 
-        <br />
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
+          Login
+        </button>
 
-        <button type="submit">Login</button>
+	<p className="text-center mt-4 text-sm">
+ 	 Don’t have an account?{" "}
+  	<a href="/register" className="text-blue-600 hover:underline">
+   	 Register
+        </a>
+	</p>
       </form>
     </div>
   );

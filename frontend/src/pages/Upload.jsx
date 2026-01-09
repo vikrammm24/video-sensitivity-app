@@ -7,18 +7,24 @@ export default function Upload() {
   const [file, setFile] = useState(null);
 
   const uploadVideo = async () => {
-    if (!file) {
-      alert("Select a video file");
-      return;
-    }
+  if (!title.trim()) {
+    alert("Title is required");
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("video", file);
+  if (!file) {
+    alert("Select a video file");
+    return;
+  }
 
-    await api.post("/videos/upload", formData);
-    alert("Uploaded");
-  };
+  const formData = new FormData();
+  formData.append("title", title);   // required
+  formData.append("video", file);
+
+  await api.post("/videos/upload", formData);
+  alert("Video uploaded");
+  window.location.href = "/library";
+};
 
   return (
     <div>
