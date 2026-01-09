@@ -1,39 +1,44 @@
-import streamRoutes from "./routes/streamRoutes.js";
-import videoRoutes from "./routes/videoRoutes.js";
-import { protect } from "./middlewares/authMiddleware.js";
-import { allowRoles } from "./middlewares/roleMiddleware.js";
 import express from "express";
 import cors from "cors";
+
 import authRoutes from "./routes/authRoutes.js";
+import videoRoutes from "./routes/videoRoutes.js";
+import streamRoutes from "./routes/streamRoutes.js";
 
 const app = express();
 
-app.get(
-  "/api/editor-only",
-  protect,
-  allowRoles("editor", "admin"),
-  (req, res) => {
-    res.json({ message: "Editor access granted" });
-  }
+/**
+ * ✅ CORS configuration
+ * Express 5 compatible
+ * Allows frontend (Vite) to access backend APIs
+ */
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
 );
 
-app.get("/api/protected", protect, (req, res) => {
-  res.json({ message: "Access granted", user: req.user });
-});
-
-app.use("/api/videos", videoRoutes);
-
-
-app.use(cors());
+/**
+ * ✅ Body parsing
+ */
 app.use(express.json());
 
+/**
+ * ✅ Routes
+ */
 app.use("/api/auth", authRoutes);
+app.use("/api/videos", videoRoutes);
+app.use("/api/stream", streamRoutes);
 
+/**
+ * ✅ Health check
+ */
 app.get("/", (req, res) => {
   res.send("API running");
 });
-
-app.use("/api/stream", streamRoutes);
 
 export default app;
 

@@ -1,18 +1,35 @@
-import Video from "./models/Video.js";
-console.log("Video model loaded:", Video.modelName);
-
 import dotenv from "dotenv";
 dotenv.config();
 
-import app from "./app.js";
 import mongoose from "mongoose";
+import http from "http";
+import { Server } from "socket.io";
+import app from "./app.js";
 
-mongoose.connect(process.env.MONGO_URI)
+const server = http.createServer(app);
+
+// ✅ CREATE SOCKET.IO INSTANCE
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173"
+  }
+});
+
+// ✅ THIS LINE IS CRITICAL (YOU WERE MISSING THIS)
+app.set("io", io);
+
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+});
+
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
-    app.listen(5000, () => {
+    server.listen(5000, () => {
       console.log("Server running on port 5000");
     });
   })
-  .catch(err => console.error(err));
+  .catch((err) => console.error(err));
+
 

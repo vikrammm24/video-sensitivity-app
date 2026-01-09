@@ -13,6 +13,7 @@ export default function Dashboard() {
     await api.post("/videos/upload", form);
     alert("Uploaded!");
   };
+<a href="/library">📚 Go to Video Library</a>
 
   return (
     <div>
