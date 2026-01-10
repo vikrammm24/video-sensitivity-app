@@ -66,3 +66,52 @@ export const getUserVideos = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch videos" });
   }
 };
+// ===========================
+// EDITOR: GET ALL VIDEOS
+// ===========================
+export const getAllVideos = async (req, res) => {
+  try {
+    const filter = {};
+    if (req.query.status) {
+      filter.status = req.query.status;
+    }
+
+    const videos = await Video.find(filter)
+      .populate("uploadedBy", "name email role")
+      .sort({ createdAt: -1 });
+
+    res.json(videos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch all videos" });
+  }
+};
+
+// ===========================
+// EDITOR: ACCEPT / REJECT VIDEO
+// ===========================
+export const updateVideoStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    if (!["safe", "flagged"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    const video = await Video.findById(req.params.id);
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    video.status = status;
+    await video.save();
+
+    res.json({
+      message: "Video status updated",
+      video,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to update video status" });
+  }
+};

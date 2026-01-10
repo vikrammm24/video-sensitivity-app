@@ -7,21 +7,27 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    try {
-      const res = await api.post("/auth/login", {
-        email,
-        password,
-      });
+  try {
+    const res = await api.post("/auth/login", {
+      email,
+      password,
+    });
 
-      localStorage.setItem("token", res.data.token);
+    localStorage.setItem("token", res.data.token);
+
+    if (res.data.user.role === "editor") {
+      window.location.href = "/editor";
+    } else {
       window.location.href = "/library";
-    } catch (err) {
-      setError("Invalid email or password");
     }
-  };
+  } catch (err) {
+    setError("Invalid email or password");
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100">
