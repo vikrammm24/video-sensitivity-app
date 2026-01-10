@@ -391,10 +391,4 @@ To develop both frontend and backend concurrently:
 
 This project is in initial development phase.
 
-## Contributing
 
-Please follow the existing code structure and naming conventions when adding new features.
-
-## License
-
-[Add your license here]
